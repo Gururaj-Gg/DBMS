@@ -1,4 +1,4 @@
-CREATE TABLE BOOK(BOOKID VARCHAR(10) PRIMARY KEY,BOOKNAME CHAR(50) NOT NULL,AUTHORID INT(10),PUBLISHER CHAR(20) NOT NULL,BRANCHID VARCHAR(10),FOREIGN KEY (BRANCHID) REFERENCES BRANCH(BRANCHID),FOREIGN KEY (AUTHORID) REFERENCES AUTHOR(AUTHORID));
+HuCREATE TABLE BOOK(BOOKID VARCHAR(10) PRIMARY KEY,BOOKNAME CHAR(50) NOT NULL,AUTHORID INT(10),PUBLISHER CHAR(20) NOT NULL,BRANCHID VARCHAR(10),FOREIGN KEY (BRANCHID) REFERENCES BRANCH(BRANCHID),FOREIGN KEY (AUTHORID) REFERENCES AUTHOR(AUTHORID));
 
 CREATE TABLE BORROW(USN VARCHAR(10),BOOKID VARCHAR(10),BORROWD_DATE DATE,
 PRIMARY KEY(USN,BOOKID),FOREIGN KEY (USN) REFERENCES STUDENT(USN),FOREIGN KEY (BOOKID) REFERENCES BOOK(BOOKID));
@@ -173,5 +173,62 @@ mysql> SELECT * FROM STUDENT WHERE BRANCHID IN (SELECT BRANCHID FROM BRANCH WHER
 +------------+---------+---------+----------+-----+
 1 row in set (0.00 sec)
 
+create table  branch(branchid int primary key,bname varchar(15),HOD varchar(15));
+insert into branch(branchid,bname,HOD) values(1,'MCA','Prof. Gomathi'),(2,'MBA','Prof. Sandeep'),(3,'CSE','Prof. Mahesh'),(4,'ISE','Prof. Asha'),(5,'EEE','Prof. Elumalai');
+select * from branch;
 
+
+create table student(USN varchar(10) primary key,Name varchar(10),Address varchar(10),Branchid varchar(10),Sem varchar(5));
+insert into student(USN,Name,Address,Branchid,Sem) values('1CR01','Harish','Bangalore','1','2'),('1CR02','Bharat','Mysore','2','3'),('1CR03','Kiran','Delhi','3','6'),('1CR04','Mahi','Chennai','4','7'),('1CR05','Krishna','Hubli','5','4');
+select * from student;
+
+
+create table book(Bookid int primary key,Bookname varchar(10),Authorid int,Publisher varchar(10), Branchid int);
+insert into book(Bookid,Bookname,Authorid,Publisher,Branchid) values(1111,'C Prog',123,'Pearson',1),(2222,'DBMS',124,'Mcgrawhill',2),(3333,'OOPS',125,'Sapna',3),(4444,'Unix',126,'Subhash',4),(5555,'C Prog',127,'Pearson',5);
+select * from book;
+
+
+create table author(Authorid int primary key,Authorname varchar(10),Country varchar(10),age int);
+insert into author(Authorid,Authorname,Country,age) values(123,'Navathe','India',55),(124,'Riche','UK',44),(125,'Ramakrishna','India',55),(126,'Sumitabha','India',38),(127,'Dennis','USA',66);
+select * from author;
+
+create table Borrow(USN varchar(10),Bookid int,Borrowed_Date varchar(10));
+insert into Borrow(USN,Bookid,Borrowed_Date) values('1CR01',2222,'10.Jan.00'),('1CR01',3333,'5.Mar.16'),('1CR03',5555,'1.Jun.10'),('1CR05',2222,'19.May.00'),('1CR02',1111,'22.feb.15');
+select * from Borrow;
+
+
+/*List the details of Students who are all studying in 2nd sem MCA.*/
+select * from student where Sem=2 and Branchid in (select Branchid from branch where bname='MCA');
+
+
+/*List the students who are not borrowed any books.*/
+select * from student where USN not in (select USN from Borrow);
+
+
+/*Display the number of books written by each Author.*/
+select count(*),Authorid from book group by Authorid;
+
+
+/*Display the USN, Student name, Branch_name, Book_name, Author_name, Books_Borrowed_Date of 2nd sem MCA Students who borrowed books.*/
+select student.USN,student.Name,branch.bname,book.Bookname,author.Authorname,Borrow.Borrowed_Date
+from student,branch,book,author,Borrow where student.USN=Borrow.USN and Borrow.Bookid=book.Bookid and book.Authorid=author.Authorid
+and student.Branchid=branch.Branchid and student.Sem=2 and branch.bname='MCA';
+
+
+/*Display the student details who borrowed more than two books.*/
+select * from student where USN in (select USN from Borrow group by USN having count(USN)>=2);
+
+
+/*Display the student details who borrowed books of more than one Author.*/
+select * from student s where exists (select br.USN from Borrow br join book bk on br.Bookid=bk.Bookid 
+where br.USN=s.USN group by USN having count(distinct Authorid)>1);
+
+
+/*Display the Book names in descending order of their names.*/
+select Bookname from book order by Bookname desc;
+
+
+/*List the details of students who borrowed the books which are all published by the same publisher.*/
+select * from student s where exists (select USN , Publisher from Borrow br join book bk
+on br.Bookid=bk.Bookid where s.USN=br.USN group by USN having count(distinct Publisher)=1);
 
