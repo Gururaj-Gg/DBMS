@@ -1,0 +1,217 @@
+CREATE TABLE TEAM(TID VARCHAR(20) PRIMARY KEY,
+TNAME VARCHAR(20),
+COACH VARCHAR(30),
+CID VARCHAR(20),
+CITY CHAR(20));
+
+CREATE TABLE PLAYER(PLYID VARCHAR(20) PRIMARY KEY,
+PNAME VARCHAR(20),
+PHNO INT(10),
+AGE INT(10),
+TID VARCHAR(20),
+FOREIGN KEY(TID) REFERENCES TEAM(TID));
+
+
+mysql> DESC PALYER;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| PLYID | int         | NO   | PRI | NULL    |       |
+| PNAME | varchar(20) | NO   |     | NULL    |       |
+| PHNO  | int         | NO   |     | NULL    |       |
+| AGE   | int         | NO   |     | NULL    |       |
+| TID   | varchar(20) | YES  | MUL | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+
+mysql> DESC TEAM;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| TID   | varchar(20) | NO   | PRI | NULL    |       |
+| TNAME | varchar(20) | NO   |     | NULL    |       |
+| COACH | varchar(30) | NO   |     | NULL    |       |
+| CID   | varchar(20) | NO   |     | NULL    |       |
+| CITY  | char(20)    | NO   |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+
+ALTER TABLE TEAM ADD FOREIGN KEY (CID) REFERENCES PLAYER(PLYID);
+
+CREATE TABLE STADIUM(STDID VARCHAR(10) PRIMARY KEY,
+SNAME CHAR(10),
+CITY CHAR(10),
+AREA_NAME VARCHAR(20),
+PINCODE INT(20));
+
+mysql> DESC STADIUM;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| STDID     | varchar(10) | NO   | PRI | NULL    |       |
+| SNAME     | char(10)    | NO   |     | NULL    |       |
+| CITY      | char(10)    | NO   |     | NULL    |       |
+| AREA_NAME | varchar(20) | NO   |     | NULL    |       |
+| PINCODE   | int         | NO   |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+CREATE TABLE MATCHH(MID VARCHAR(20) PRIMARY KEY,
+TID1 VARCHAR(20),
+TID2 VARCHAR(20),
+SDATE DATE,
+STIME TIME,
+STDID VARCHAR(10),
+WINID VARCHAR(20),
+FOREIGN KEY(TID1) REFERENCES TEAM(TID),
+FOREIGN KEY(TID2) REFERENCES TEAM(TID),
+FOREIGN KEY(WINID) REFERENCES TEAM(TID),
+FOREIGN KEY(STDID) REFERENCES STADIUM(STDID));
+
+CREATE TABLE MATCHH(MID VARCHAR(20) PRIMARY KEY,
+TID1 VARCHAR(20),
+TID2 VARCHAR(20),
+SDATE DATE,
+STIME TIME,
+STDID VARCHAR(10),
+WINID VARCHAR(20),
+FOREIGN KEY(TID1) REFERENCES TEAM(TID),
+FOREIGN KEY(TID2) REFERENCES TEAM(TID),
+FOREIGN KEY(WINID) REFERENCES TEAM(TID),
+FOREIGN KEY(STDID) REFERENCES STADIUM(STDID));
+
+mysql> DESC MATCHH;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| MID   | varchar(20) | NO   | PRI | NULL    |       |
+| TID1  | varchar(20) | NO   | MUL | NULL    |       |
+| TID2  | varchar(20) | NO   | MUL | NULL    |       |
+| SDATE | date        | NO   |     | NULL    |       |
+| STIME | time        | NO   |     | NULL    |       |
+| STDID | varchar(10) | NO   | MUL | NULL    |       |
+| WINID | varchar(20) | NO   | MUL | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+
+INSERT INTO MOFMATCH VALUES('
+
+CREATE TABLE MOFMATCH(PLYID VARCHAR(20) NOT NULL,
+MID VARCHAR(20) NOT NULL,
+PRIMARY KEY(PLYID,MID));
+
+ALTER TABLE MOFMATCH ADD FOREIGN KEY (PLYID) REFERENCES PLAYER(PLYID);
+
+ALTER TABLE MOFMATCH ADD FOREIGN KEY (MID) REFERENCES MATCHH(MID);
+
+INSERT INTO TEAM(TID,TNAME,COACH,CITY) VALUES ('16','RCB','GANGULI','BANGLORE');
+INSERT INTO TEAM(TID,TNAME,COACH,CITY) VALUES ('17','CSK','SACHIN','CHENNAI');
+INSERT INTO TEAM(TID,TNAME,COACH,CITY) VALUES ('18','MI','DHONI','MUMBAI');
+INSERT INTO TEAM(TID,TNAME,COACH,CITY) VALUES ('15','RR','DRAVID','RAJASTHAN');
+
+mysql> SELECT * FROM TEAM;
++-----+-------+---------+------+-----------+
+| TID | TNAME | COACH   | CID  | CITY      |
++-----+-------+---------+------+-----------+
+| 15  | RR    | DRAVID  | NULL | RAJASTHAN |
+| 16  | RCB   | GANGULI | NULL | BANGLORE  |
+| 17  | CSK   | SACHIN  | NULL | CHENNAI   |
+| 18  | MI    | DHONI   | NULL | MUMBAI    |
++-----+-------+---------+------+-----------+
+4 rows in set (0.00 sec)
+
+
+INSERT INTO PLAYER(PLYID,PNAME,PHNO,AGE,TID) VALUES ('A01','GURURAJ','9686027827','21','16');
+
+INSERT INTO PLAYER(PLYID,PNAME,PHNO,AGE,TID) VALUES ('A02','SACHIN',967602827,31,'16');
+
+INSERT INTO PLAYER(PLYID,PNAME,PHNO,AGE,TID) VALUES ('A07','RANAJ',868672727,28,'17');
+
+INSERT INTO PLAYER(PLYID,PNAME,PHNO,AGE,TID) VALUES ('A04','RAJATH',858602727,32,'18');
+INSERT INTO PLAYER(PLYID,PNAME,PHNO,AGE,TID) VALUES ('A05','RANJAN',858642727,33,'15');
+
+mysql> SELECT * FROM PLAYER;
++-------+---------+-----------+-----+------+
+| PLYID | PNAME   | PHNO      | AGE | TID  |
++-------+---------+-----------+-----+------+
+| A01   | GURURAJ | 968602782 |  21 | 16   |
+| A02   | SACHIN  | 967602827 |  31 | 16   |
+| A03   | RAJ     | 868602727 |  22 | 17   |
+| A04   | RAJATH  | 858602727 |  32 | 18   |
+| A05   | RANJAN  | 858642727 |  33 | 15   |
++-------+---------+-----------+-----+------+
+5 rows in set (0.00 sec)
+
+
+
+UPDATE TEAM SET CID='A01' WHERE TID='16';
+UPDATE TEAM SET CID='A02' WHERE TID='17';
+UPDATE TEAM SET CID='A03' WHERE TID='18';
+UPDATE TEAM SET CID='A04' WHERE TID='15';
+
+mysql> SELECT * FROM TEAM;
++-----+-------+---------+------+-----------+
+| TID | TNAME | COACH   | CID  | CITY      |
++-----+-------+---------+------+-----------+
+| 15  | RR    | DRAVID  | A04  | RAJASTHAN |
+| 16  | RCB   | GANGULI | A01  | BANGLORE  |
+| 17  | CSK   | SACHIN  | A02  | CHENNAI   |
+| 18  | MI    | DHONI   | A03  | MUMBAI    |
++-----+-------+---------+------+-----------+
+4 rows in set (0.00 sec)
+
+INSERT INTO STADIUM VALUES('S01','CHINNASWAMY','BANGALORE','HSR',574243);
+
+INSERT INTO STADIUM VALUES('S02','HIGHTON','CHENNAI','RONA',574213);
+
+INSERT INTO STADIUM VALUES('S03','NARENDRA','GUJARATH','DRONA',504243);
+
+mysql> SELECT * FROM STADIUM;
++-------+-----------+-----------+-----------+---------+
+| STDID | SNAME     | CITY      | AREA_NAME | PINCODE |
++-------+-----------+-----------+-----------+---------+
+| S01   | CHINASAMY | BANGALORE | HSR       |  574243 |
+| S02   | HIGHTON   | CHENNAI   | RONA      |  574213 |
+| S03   | NARENDRA  | GUJARATH  | DRONA     |  504243 |
++-------+-----------+-----------+-----------+---------+
+3 rows in set (0.01 sec)
+
+INSERT INTO MATCHH VALUES ('M101','15','16','2022-02-12','10:20:20','S01','16');
+INSERT INTO MATCHH VALUES ('M102','17','16','2021-02-12','11:20:20','S02','17');
+INSERT INTO MATCHH VALUES ('M103','17','18','2021-02-11','11:10:20','S03','18');
+
+mysql> SELECT * FROM MATCHH;
++------+------+------+------------+----------+-------+-------+
+| MID  | TID1 | TID2 | SDATE      | STIME    | STDID | WINID |
++------+------+------+------------+----------+-------+-------+
+| M101 | 15   | 16   | 2022-02-12 | 10:20:20 | S01   | 16    |
+| M102 | 17   | 16   | 2021-02-12 | 11:20:20 | S02   | 17    |
+| M103 | 17   | 18   | 2021-02-11 | 11:10:20 | S03   | 18    |
++------+------+------+------------+----------+-------+-------+
+3 rows in set (0.00 sec)
+
+INSERT INTO MOFMATCH VALUES('A07','M102');
+INSERT INTO MOFMATCH VALUES('A07','M101');
+INSERT INTO MOFMATCH VALUES('A02','M103');
+
+
+
+
+
+
+mysql> SELECT PNAME,PLYID,AGE FROM PLAYER WHERE AGE IN(SELECT MIN(AGE) FROM PLAYER GROUP BY TID);
++---------+-------+-----+
+| PNAME   | PLYID | AGE |
++---------+-------+-----+
+| GURURAJ | A01   |  21 |
+| RAJ     | A03   |  22 |
+| RAJATH  | A04   |  32 |
+| RANJAN  | A05   |  33 |
++---------+-------+-----+
+4 rows in set (0.00 sec)
+
+
+
+
+
+
