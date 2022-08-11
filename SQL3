@@ -179,6 +179,8 @@ mysql> SELECT * FROM STADIUM;
 INSERT INTO MATCHH VALUES ('M101','15','16','2022-02-12','10:20:20','S01','16');
 INSERT INTO MATCHH VALUES ('M102','17','16','2021-02-12','11:20:20','S02','17');
 INSERT INTO MATCHH VALUES ('M103','17','18','2021-02-11','11:10:20','S03','18');
+INSERT INTO MATCHH VALUES ('M104','15','17','2022-01-12','10:20:20','S01','17');
+INSERT INTO MATCHH VALUES ('M105','18','16','2021-02-12','10:20:20','S03','18');
 
 mysql> SELECT * FROM MATCHH;
 +------+------+------+------------+----------+-------+-------+
@@ -194,7 +196,7 @@ INSERT INTO MOFMATCH VALUES('A07','M102');
 INSERT INTO MOFMATCH VALUES('A07','M101');
 INSERT INTO MOFMATCH VALUES('A02','M103');
 
-
+INSERT INTO MOFMATCH VALUES('A02','M102');
 
 
 
@@ -210,7 +212,47 @@ mysql> SELECT PNAME,PLYID,AGE FROM PLAYER WHERE AGE IN(SELECT MIN(AGE) FROM PLAY
 +---------+-------+-----+
 4 rows in set (0.00 sec)
 
+1) mysql> SELECT PNAME,TNAME,AGE FROM PLAYER P,TEAM T WHERE P.TID=T.TID AND AGE=(SELECT MIN(AGE) FROM PLAYER);
++---------+-------+-----+
+| PNAME   | TNAME | AGE |
++---------+-------+-----+
+| GURURAJ | RCB   |  21 |
++---------+-------+-----+
+1 row in set (0.00 s
 
+
+
+2) mysql> SELECT * FROM STADIUM WHERE STDID=(SELECT STDID FROM MATCHH GROUP BY STDID ORDER BY COUNT(STDID)DESC LIMIT 1);
++-------+-----------+-----------+-----------+---------+
+| STDID | SNAME     | CITY      | AREA_NAME | PINCODE |
++-------+-----------+-----------+-----------+---------+
+| S01   | CHINASAMY | BANGALORE | HSR       |  574243 |
++-------+-----------+-----------+-----------+---------+
+1 row in set (0.00 sec)
+
+3) mysql> SELECT * FROM PLAYER WHERE PLYID IN(SELECT PLYID FROM MOFMATCH WHERE PLYID NOT IN(SELECT CID FROM TEAM) GROUP BY PLYID HAVING COUNT(PLYID)>=2);
++-------+-------+-----------+-----+------+
+| PLYID | PNAME | PHNO      | AGE | TID  |
++-------+-------+-----------+-----+------+
+| A07   | RANAJ | 868672727 |  28 | 17   |
++-------+-------+-----------+-----+------+
+1 row in set (0.00 sec)
+
+
+INSERT INTO MOFMATCH VALUES('A02','M102');
+
+4) mysql> SELECT * FROM TEAM WHERE TID=(SELECT WINID FROM MATCHH GROUP BY WINID ORDER BY COUNT(WINID) DESC LIMIT 1);
++-----+-------+--------+------+---------+
+| TID | TNAME | COACH  | CID  | CITY    |
++-----+-------+--------+------+---------+
+| 17  | CSK   | SACHIN | A02  | CHENNAI |
++-----+-------+--------+------+---------+
+1 row in set (0.00 sec)
+
+SELECT TNAME FROM TEAM TID IN(SELECT WINID FROM MATCHH GROUP BY(WINID) IN(SELECT STDID FROM MATCHH GROUP BY(STDID) HAVING COUNT(*) IN(SELECT COUNT(WINID) FROM MATCHH GROUP BY WINID)));
+SELECT TNAME FROM TEAM WHERE TID IN(SELECT WINID FROM MATCHH GROUP BY WINID,STDID HAVING COUNT(*) IN (SELECT COUNT(WINID) FROM MATCHH GROUP
+BY WINID));
+ 
 
 
 
