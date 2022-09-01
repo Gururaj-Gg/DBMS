@@ -1,0 +1,193 @@
+CREATE TABLE TPLACE(TPID INT(10) PRIMARY KEY,
+HISTORY VARCHAR(20),KIM INT(10),STATE VARCHAR(20),TPNAME VARCHAR(20));
+
+
+CREATE TABLE TOURIST(TID INT(5) PRIMARY KEY,
+TNAME VARCHAR(20),COUNTRY VARCHAR(20),AGE INT(20));
+
+CREATE TABLE VISITED(TPID INT(10),TID INT(5),PRIMARY KEY(TPID,TID),
+FOREIGN KEY(TID) REFERENCES TOURIST(TID),
+FOREIGN KEY(TPID) REFERENCES TPLACE(TPID),VDATE DATE);
+
+CREATE TABLE EMAILL(TID INT(5),FOREIGN KEY (TID) REFERENCES TOURIST(TID),EMAIL VARCHAR(20),PRIMARY KEY(TID,EMAIL));
+
+mysql> DESC TPLACE;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| TPID    | int         | NO   | PRI | NULL    |       |
+| HISTORY | varchar(20) | YES  |     | NULL    |       |
+| KIM     | int         | YES  |     | NULL    |       |
+| STATE   | varchar(20) | YES  |     | NULL    |       |
+| TPNAME  | varchar(20) | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> DESC TOURIST;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| TID     | int         | NO   | PRI | NULL    |       |
+| TNAME   | varchar(20) | YES  |     | NULL    |       |
+| COUNTRY | varchar(20) | YES  |     | NULL    |       |
+| AGE     | int         | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> DESC VISITED;
++-------+------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-------+------+------+-----+---------+-------+
+| TPID  | int  | NO   | PRI | NULL    |       |
+| TID   | int  | NO   | PRI | NULL    |       |
+| VDATE | date | YES  |     | NULL    |       |
++-------+------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> DESC EMAILL;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| TID   | int         | NO   | PRI | NULL    |       |
+| EMAIL | varchar(20) | NO   | PRI | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+
+INSERT INTO TPLACE VALUES(11,'BEAUTY',160,'KARNATAKA','OOTY');
+INSERT INTO TPLACE VALUES(12,'HEAVEN',300,'KARNATAKA','COORG');
+INSERT INTO TPLACE VALUES(13,'SEA',350,'KARNATAKA','MANGLORE');
+INSERT INTO TPLACE VALUES(14,'GOD_LAND',40,'KERALA','KASARAGOD');
+
+mysql> SELECT * FROM TPLACE;
++------+----------+------+-----------+-----------+
+| TPID | HISTORY  | KIM  | STATE     | TPNAME    |
++------+----------+------+-----------+-----------+
+|   11 | BEAUTY   |  160 | KARNATAKA | OOTY      |
+|   12 | HEAVEN   |  300 | KARNATAKA | COORG     |
+|   13 | SEA      |  350 | KARNATAKA | MANGLORE  |
+|   14 | GOD_LAND |   40 | KERALA    | KASARAGOD |
++------+----------+------+-----------+-----------+
+4 rows in set (0.00 sec)
+
+
+INSERT INTO TOURIST VALUES(22,'PRAKASH','INDIA',34);
+INSERT INTO TOURIST VALUES(21,'AKASH','INDIA',24);
+INSERT INTO TOURIST VALUES(23,'DOLLY','USA',44);
+INSERT INTO TOURIST VALUES(24,'PRANAM','INDIA',32);
+
+mysql> SELECT * FROM TOURIST;
++-----+---------+---------+------+
+| TID | TNAME   | COUNTRY | AGE  |
++-----+---------+---------+------+
+|  21 | AKASH   | INDIA   |   24 |
+|  22 | PRAKASH | INDIA   |   34 |
+|  23 | DOLLY   | USA     |   44 |
+|  24 | PRANAM  | INDIA   |   32 |
++-----+---------+---------+------+
+4 rows in set (0.00 sec)
+
+INSERT INTO VISITED VALUES(&TPID,&TID,&VDATE);
+
+INSERT INTO VISITED VALUES(11,22,'1995-03-01');
+INSERT INTO VISITED VALUES(13,23,'2022-04-06');
+INSERT INTO VISITED VALUES(14,24,'2001-06-01');
+
+
+mysql> SELECT * FROM VISITED;
++------+-----+------------+
+| TPID | TID | VDATE      |
++------+-----+------------+
+|   11 |  22 | 1995-03-01 |
+|   12 |  22 | 2022-04-06 |
+|   13 |  21 | 2022-04-06 |
+|   13 |  22 | 2012-04-06 |
+|   13 |  23 | 2022-04-06 |
+|   14 |  22 | 2010-04-06 |
+|   14 |  24 | 2001-06-01 |
++------+-----+------------+
+7 rows in set (0.00 sec)
+
+
+
+
+INSERT INTO EMAILL VALUES(21,'akash@gmail.com');
+INSERT INTO EMAILL VALUES(22,'prakash@gmail.com');
+INSERT INTO EMAILL VALUES(23,'dolly@gmail.com');
+INSERT INTO EMAILL VALUES(24,'pranam@gmail.com');
+INSERT INTO EMAILL VALUES(21,'akasha@gmail.com');
+
+mysql> select * from EMAILL;
++-----+-------------------+
+| TID | EMAIL             |
++-----+-------------------+
+|  21 | akash@gmail.com   |
+|  21 | akasha@gmail.com  |
+|  22 | prakash@gmail.com |
+|  23 | dolly@gmail.com   |
+|  24 | pranam@gmail.com  |
++-----+-------------------+
+5 rows in set (0.00 sec)
+
+
+i. List the state name which is having maximum number of tourist places.
+
+1).mysql> SELECT STATE,COUNT(TPID) FROM TPLACE GROUP BY STATE ORDER BY COUNT(TPID) DESC LIMIT 1;
++-----------+-------------+
+| STATE     | COUNT(TPID) |
++-----------+-------------+
+| KARNATAKA |           3 |
++-----------+-------------+
+1 row in set (0.01 sec)
+
+ii. List details of Tourist place where maximum number of tourists visited.
+
+2)mysql> SELECT TP.TPID,TP.TPNAME,TP.STATE,COUNT(V.TID) FROM TPLACE TP,VISITED V WHERE V.TPID=TP.TPID GROUP BY V.TPID ORDER BY COUNT(V.TPID) DESC;
++------+----------+-----------+--------------+
+| TPID | TPNAME   | STATE     | COUNT(V.TID) |
++------+----------+-----------+--------------+
+|   13 | MANGLORE | KARNATAKA |            2 |
++------+----------+-----------+--------------+
+1 row in set (0.00 sec)
+
+
+iii. List the details of tourists visited all tourist places of the state “KARNATAKA”.
+
+3).mysql> SELECT * FROM TOURIST WHERE TID IN(SELECT TID FROM VISITED,TPLACE WHERE VISITED.TPID=TPLACE.TPID AND STATE='KARNATAKA' GROUP BY TID HAVING COUNT(STATE)IN(SELECT COUNT(STATE) FROM TPLACE WHERE STATE='KARNATAKA'));
++-----+---------+---------+------+
+| TID | TNAME   | COUNTRY | AGE  |
++-----+---------+---------+------+
+|  22 | PRAKASH | INDIA   |   34 |
+|  23 | DOLLY   | USA     |   44 |
++-----+---------+---------+------+
+2 rows in set (0.00 sec)
+
+
+iv. Display the details of the tourists visited at least one tourist place of the state, but visited
+all states tourist places.
+
+4).
+SELECT * FROM TOURIST WHERE TID IN(SELECT TID FROM VISITED,TPLACE WHERE VISITED.TPID=TPLACE.TPID GROUP BY TID HAVING COUNT(DISTINCT STATE) IN (SELECT COUNT(DISTINCT STATE) FROM TPLACE));
++-----+---------+---------+------+
+| TID | TNAME   | COUNTRY | AGE  |
++-----+---------+---------+------+
+|  22 | PRAKASH | INDIA   |   34 |
++-----+---------+---------+------+
+1 row in set (0.00 sec)
+
+
+v. Display the details of the tourist place visited by the tourists of all country.
+
+5)mysql> SELECT * FROM TPLACE WHERE TPID IN(SELECT TPID FROM VISITED,TOURIST WHERE VISITED.TID=TOURIST.TID GROUP BY TPID HAVING COUNT(DISTINCT COUNTRY)=(SELECT COUNT(DISTINCT COUNTRY) FROM TOURIST));
++------+---------+------+-----------+----------+
+| TPID | HISTORY | KIM  | STATE     | TPNAME   |
++------+---------+------+-----------+----------+
+|   13 | SEA     |  350 | KARNATAKA | MANGLORE |
++------+---------+------+-----------+----------+
+1 row in set (0.00 sec)
+
+
+
+
+
+
