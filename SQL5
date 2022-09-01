@@ -1,0 +1,192 @@
+5. A country wants to conduct an election for the parliament. A country having many
+constituencies. Each constituency is identified uniquely by Constituency_id, having the
+Name, belongs to a state,Number_of_voters. A constituency can have many voters. Each voter
+is uniquely identified by using Voter_id, having the Name, age, address (involves
+Houseno,city,state,pincode). Each voter belongs to only one constituency. There are many
+candidates contesting in the election. Each candidates are uniquely identified by using
+candidate_id, having Name, phone_no, age, state. A candidate belongs to only one
+party.Thereare many parties. Each party is uniquely identified by using Party_id, having
+Party_Name,Party_symbol. A candidate can contest from many constituencies under a same
+party. A party can have many candidates contesting from different constituencies. No
+constituency having the candidates from the same party. A constituency can have many
+contesting candidates belongs to different parties. Each voter votes only one candidate of
+his/her constituencty.
+Queries:
+i. List the details of the candidates who are contesting from more than one constituencies
+which are belongs to different states.
+ii. Display the state name having maximum number of constituencies.
+iii. Create a stored procedure to insert the tuple into the voter table by checking the voter
+age. If voter’s age is at least 18 years old, then insert the tuple into the voter else display the
+“Not an eligible voter msg” .
+iv. Create a stored procedure to display the number_of_voters in the specified constituency.
+Where the constituency name is passed as an argument to the stored procedure.
+v. Create a TRIGGER to UPDATE the count of “ Number_of_voters” of the respective
+constituency in “CONSTITUENCY” table , AFTER inserting a tuple into the “VOTERS” table.
+
+
+
+CREATE TABLE PARTY(PID INT(10) PRIMARY KEY,PNAME VARCHA(20),SYMBOL VARCHAR(20));
+
+mysql> DESC PARTY;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| PID    | int         | NO   | PRI | NULL    |       |
+| PNAME  | varchar(20) | YES  |     | NULL    |       |
+| SYMBOL | varchar(20) | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+
+INSERT INTO PARTY VALUES(1,'BJP','LOTUS');
+INSERT INTO PARTY VALUES(02,'CONGRESS','HAND');
+INSERT INTO PARTY VALUES(03,'BSP','ELEPHANT');
+INSERT INTO PARTY VALUES(04,'NCP','CLOCK');
+INSERT INTO PARTY VALUES(05,'CPI','HAMMER');
+
+mysql> SELECT * FROM PARTY;
++-----+----------+----------+
+| PID | PNAME    | SYMBOL   |
++-----+----------+----------+
+|   1 | BJP      | LOTUS    |
+|   2 | CONGRESS | HAND     |
+|   3 | BSP      | ELEPHANT |
+|   4 | NCP      | CLOCK    |
+|   5 | CPI      | HAMMER   |
++-----+----------+----------+
+5 rows in set (0.00 sec)
+
+CREATE TABLE CANDIDATE(CNID INT(10) PRIMARY KEY,NAME VARCHAR(20),PHNO INT(10),AGE INT(10),STATE VARCHAR(20),PID INT(10),FOREIGN KEY(PID) REFERENCES PARTY(PID));
+
+mysql> DESC CANDIDATE;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| CNID  | int         | NO   | PRI | NULL    |       |
+| NAME  | varchar(20) | YES  |     | NULL    |       |
+| PHNO  | int         | YES  |     | NULL    |       |
+| AGE   | int         | YES  |     | NULL    |       |
+| STATE | varchar(20) | YES  |     | NULL    |       |
+| PID   | int         | YES  | MUL | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+INSERT INTO CANDIDATE VALUES(20,'AJAY',968602787,22,'KARNATAKA',1);
+INSERT INTO CANDIDATE VALUES(21,'AMAY',978602787,27,'KARNATAKA',1);
+INSERT INTO CANDIDATE VALUES(23,'KARTHIK',978692787,47,'ANDHRA',3);
+INSERT INTO CANDIDATE VALUES(24,'DEEKSHITH',977602787,50,'MAHARASHTRA',4);
+INSERT INTO CANDIDATE VALUES(25,'DOLLY',978602587,18,'ANDHRA',2);
+
+mysql> SELECT * FROM CANDIDATE;
++------+-----------+-----------+------+-------------+------+
+| CNID | NAME      | PHNO      | AGE  | STATE       | PID  |
++------+-----------+-----------+------+-------------+------+
+|   20 | AJAY      | 968602787 |   22 | KARNATAKA   |    1 |
+|   21 | AMAY      | 978602787 |   27 | KARNATAKA   |    1 |
+|   23 | KARTHIK   | 978692787 |   47 | ANDHRA      |    3 |
+|   24 | DEEKSHITH | 977602787 |   50 | MAHARASHTRA |    4 |
+|   25 | DOLLY     | 978602587 |   18 | ANDHRA      |    2 |
++------+-----------+-----------+------+-------------+------+
+5 rows in set (0.00 sec)
+
+
+CREATE TABLE CONSTITUTE(CNTID INT(10) PRIMARY KEY,CNAME VARCHAR(20),CSTATE VARCHAR(20),NOFVTER INT(10));
+
+
+mysql> DESC CONSTITUTE;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| CNTID   | int         | NO   | PRI | NULL    |       |
+| CNAME   | varchar(20) | YES  |     | NULL    |       |
+| CSTATE  | varchar(20) | YES  |     | NULL    |       |
+| NOFVTER | int         | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+
+INSERT INTO CONSTITUTE VALUES(1,'PUTTUR','KARNATAKA','200');
+INSERT INTO CONSTITUTE VALUES(2,'MUDBIDRE','KARNATAKA','190');
+INSERT INTO CONSTITUTE VALUES(3,'UPPINANGADY','KARNATAKA','150');
+INSERT INTO CONSTITUTE VALUES(4,'BELAGUM','KARNATAKA','150');
+INSERT INTO CONSTITUTE VALUES(5,'CHIKKODI','KARNATAKA','150');
+INSERT INTO CONSTITUTE VALUES(6,'VERNAKULAM','ANDHRA','150');
+INSERT INTO CONSTITUTE VALUES(5,'SHRIKULAM','ANDHRA','150');
+
+mysql> SELECT * FROM CONSTITUTE;
++-------+-------------+-----------+---------+
+| CNTID | CNAME       | CSTATE    | NOFVTER |
++-------+-------------+-----------+---------+
+|     1 | PUTTUR      | KARNATAKA |     200 |
+|     2 | MUDBIDRE    | KARNATAKA |     190 |
+|     3 | UPPINANGADY | KARNATAKA |     150 |
+|     4 | BELAGUM     | KARNATAKA |     150 |
+|     5 | CHIKKODI    | KARNATAKA |     150 |
+|     6 | VERNAKULAM  | ANDHRA    |     150 |
+|     7 | SHRIKULAM   | ANDHRA    |     150 |
++-------+-------------+-----------+---------+
+7 rows in set (0.01 sec)
+
+CREATE TABLE VOTER(VID VARCHAR(20) PRIMARY KEY,VNAME VARCHAR(20),VAGE INT(10),VHN0 INT(10),CITY CHAR(10),STATE CHAR(10),PINCODE INT(6),CNTID INT(10),CNID INT(10),FOREIGN KEY(CNTID) REFERENCES CONSTITUTE(CNTID),FOREIGN KEY(CNID) REFERENCES CANDIDATE(CNID));
+
+mysql> DESC VOTER;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| VID     | varchar(20) | NO   | PRI | NULL    |       |
+| VNAME   | varchar(20) | YES  |     | NULL    |       |
+| VAGE    | int         | YES  |     | NULL    |       |
+| VHN0    | int         | YES  |     | NULL    |       |
+| CITY    | char(10)    | YES  |     | NULL    |       |
+| STATE   | char(10)    | YES  |     | NULL    |       |
+| PINCODE | int         | YES  |     | NULL    |       |
+| CNTID   | int         | YES  | MUL | NULL    |       |
+| CNID    | int         | YES  | MUL | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+9 rows in set (0.01 sec)
+
+INSERT INTO VOTER VALUE('A21','GURURAJ',17,22,'PUTTUR','KARNATAKA',574203,1,20);
+INSERT INTO VOTER VALUE('A22','RAJ',18,77,'PUTTUR','KARNATAKA',574203,1,21);
+INSERT INTO VOTER VALUE('B21','GANARAJ',32,12,'MUDBIDRE','KARNATAKA',574200,2,23);
+INSERT INTO VOTER VALUE('B22','ANAGHA',45,33,'VERNAKULAM','ANDHRA',504203,3,22);
+
+mysql> SELECT * FROM VOTER;
++-----+---------+------+------+------------+-----------+---------+-------+------+
+| VID | VNAME   | VAGE | VHN0 | CITY       | STATE     | PINCODE | CNTID | CNID |
++-----+---------+------+------+------------+-----------+---------+-------+------+
+| A21 | GURURAJ |   17 |   22 | PUTTUR     | KARNATAKA |  574203 |     1 |   20 |
+| A22 | RAJ     |   18 |   77 | PUTTUR     | KARNATAKA |  574203 |     1 |   21 |
+| B21 | GANARAJ |   32 |   12 | MUDBIDRE   | KARNATAKA |  574200 |     2 |   23 |
+| B22 | ANAGHA  |   45 |   33 | VERNAKULAM | ANDHRA    |  504203 |     3 |   24 |
++-----+---------+------+------+------------+-----------+---------+-------+------+
+4 rows in set (0.00 sec)
+
+
+
+CREATE TABLE CONTEST(CNTID INT(10),CNID INT(10),PRIMARY KEY(CNTID,CNID),FOREIGN KEY(CNTID) REFERENCES CONSTITUTE(CNTID),FOREIGN KEY(CNID) REFERENCES CANDIDATE(CNID));
+
+mysql> DESC CONTEST;
++-------+------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-------+------+------+-----+---------+-------+
+| CNTID | int  | NO   | PRI | NULL    |       |
+| CNID  | int  | NO   | PRI | NULL    |       |
++-------+------+------+-----+---------+-------+
+2 rows in set (0.01 sec)
+
+INSERT INTO CONTEST VALUES(1,20);
+INSERT INTO CONTEST VALUES(2,24);
+INSERT INTO CONTEST VALUES(3,21);
+INSERT INTO CONTEST VALUES(1,21);
+
+mysql> SELECT * FROM CONTEST;
++-------+------+
+| CNTID | CNID |
++-------+------+
+|     1 |   20 |
+|     1 |   21 |
+|     3 |   21 |
+|     2 |   24 |
++-------+------+
+4 rows in set (0.00 sec)
+
+
